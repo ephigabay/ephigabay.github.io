@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-11-09T21:34:43+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">0xFE</title><subtitle>I do stuff.. with computers</subtitle><author><name>Ephi Gabay</name></author><entry><title type="html">Using the Rules of TDD to Know Which Tests to Write</title><link href="http://localhost:4000/2018/07/07/using-the-rules-of-tdd-to-know-which-tests-to-write/" rel="alternate" type="text/html" title="Using the Rules of TDD to Know Which Tests to Write" /><published>2018-07-07T00:00:00+03:00</published><updated>2018-07-07T00:00:00+03:00</updated><id>http://localhost:4000/2018/07/07/using-the-rules-of-tdd-to-know-which-tests-to-write</id><content type="html" xml:base="http://localhost:4000/2018/07/07/using-the-rules-of-tdd-to-know-which-tests-to-write/">&lt;p&gt;As you might know, I’ve been spending the last few months or so teaching a friend of mine how to code. Lately, I started practicing TDD myself and decided to introduce this technique to him too.&lt;/p&gt;
+
+&lt;p&gt;As a first project written with TDD we decided to go with a simple pong game. It’ll have two paddles and a ball, the ball should move in a random direction, and change its direction once it hits something. Simple enough.&lt;/p&gt;
+
+&lt;p&gt;The first class he started writing was the Ball class. He wrote a test that checks whether the ball has an x and y position, then he wrote some code to pass that test. He moved on to testing that the ball can move and implemented a move() function that changes the position of the ball by a constant value and the test passed. After writing the move() function, he thought to himself (yes, I can read minds) – “wait, this shouldn’t be a constant value, it should be a randomly generated one”, so he decided to add a function that randomly generates these values. While he was writing the code that does it, I looked over his shoulder and saw that all of his tests are passing. According to the third law of TDD by Uncle Bob – “You are not allowed to write any more production code than is sufficient to pass the one failing unit test”, so he shouldn’t have written that function. I stopped him, and we started to think about what kind of test he should write that would test the change he wanted to make in the code. The first and most trivial solution was to write a test that creates two balls, moves them and makes sure that they move in different directions, but according to testing best practices, a test should be deterministic. It shouldn’t fail randomly even if the odds are very low for it to happen. So, this test wasn’t the test we were looking for. After some more thinking, I remembered another rule of testing, that a unit test should only test the class it was intended to test, and not any other code, but if we were going to test that the ball generates the direction randomly, we were also going to test the Math.random() function, and we shouldn’t.&lt;/p&gt;
+
+&lt;p&gt;Now everything was clear, we had to mock Math.random(), luckily we found an npm module that does exactly that – jest-mock-random. All we had to do, was to mock the random() function and make it return predefined values, then make sure that the ball moves at the expected direction. 100% deterministic test.&lt;/p&gt;
+
+&lt;p&gt;It was so fun and enlightening for me to be able to understand that something is wrong with a test without understanding exactly what is wrong with it or how to fix it just by knowing that it doesn’t comply with the rules and then using the rules and best practices to craft the perfect test that does exactly what it should.&lt;/p&gt;</content><author><name>Ephi Gabay</name></author><summary type="html">As you might know, I’ve been spending the last few months or so teaching a friend of mine how to code. Lately, I started practicing TDD myself and decided to introduce this technique to him too.</summary></entry><entry><title type="html">Thoughts About Learning how to Code</title><link href="http://localhost:4000/2018/06/18/thoughts-about-learning-how-to-code/" rel="alternate" type="text/html" title="Thoughts About Learning how to Code" /><published>2018-06-18T00:00:00+03:00</published><updated>2018-06-18T00:00:00+03:00</updated><id>http://localhost:4000/2018/06/18/thoughts-about-learning-how-to-code</id><content type="html" xml:base="http://localhost:4000/2018/06/18/thoughts-about-learning-how-to-code/">&lt;p&gt;A few months ago a friend of mine asked me to teach him how to code in JavaScript. He learned how to code in C# when he was in high school, so I thought it should be fairly easy. I had never thought how enlighting this experience would be for me.&lt;/p&gt;
+
+&lt;p&gt;My first suggestion was that we code something together in react-native, this way we could both learn. We started coding, and most of the times, he could lay the general flow of the code, but using the “magic” of react-native and understanding how everything works as an addition to learning the language was too confusing. It was not possible to understand which “magic” is part of the language and which is from react-native.&lt;/p&gt;
+
+&lt;p&gt;Once I understood that learning a language and a framework can be very confusing, I recommended him to solve katas on  &lt;a href=&quot;https://codewars.com/&quot;&gt;CodeWars&lt;/a&gt;. It has an isolated environment he can execute code, and to really understand the language without much stuff that could confuse you.&lt;/p&gt;
+
+&lt;p&gt;I was watching him solving the katas, and it went very well. One of my observations, though, was that he had some recurring pitfalls. For example, understanding which functions he can execute on which variables. The concept of variable types in JavaScript, as in most other scripting languages, is very vague. As a novice developer, it is really hard to understand this concept in a not strongly typed language.&lt;/p&gt;
+
+&lt;p&gt;It reminded me of the time when I decided to go to college and took a CS 101 class after coding for almost 10 years. They taught us C, which really surprised me because this language doesn’t have many of the “magical” things we have in modern languages, like memory management, strings, and array sizes. But after finishing the course, I could understand how arrays worked memory-wise, why the size in bytes of a string is its actual size plus 1, and much more. These understandings helped me, later on, write much better code and understand some of the limitations there are on different variable types. For example, before the course, I had to remember that arrays are passed as a reference, but integers are not. After the course, I could understand that arrays are actually pointers to the memory, and it makes absolute sense that they are passed as a reference. I didn’t have to remember anymore – I understood.&lt;/p&gt;
+
+&lt;p&gt;If I had to teach anyone else how to code, after this experience, I would absolutely go with as less “magic” in the language as possible. It might slow the process a bit but would save a lot of time and frustration in the future.&lt;/p&gt;</content><author><name>Ephi Gabay</name></author><summary type="html">A few months ago a friend of mine asked me to teach him how to code in JavaScript. He learned how to code in C# when he was in high school, so I thought it should be fairly easy. I had never thought how enlighting this experience would be for me.</summary></entry><entry><title type="html">Promisifying Post Messages</title><link href="http://localhost:4000/2017/05/17/promisifying-post-message/" rel="alternate" type="text/html" title="Promisifying Post Messages" /><published>2017-05-17T00:00:00+03:00</published><updated>2017-05-17T00:00:00+03:00</updated><id>http://localhost:4000/2017/05/17/promisifying-post-message</id><content type="html" xml:base="http://localhost:4000/2017/05/17/promisifying-post-message/">&lt;p&gt;Your boss comes to you, and tells you that he wants you to build something that communicates with a web page inside an iframe.&lt;br /&gt;
+“Sounds simple!” – you reply.&lt;br /&gt;
+You read the details, and you find out that the web page you need to communicate with is on another origin and uses  &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage&quot;&gt;postMessage&lt;/a&gt;  for communication.&lt;br /&gt;
+“Ok.. PostMessage should be easy. You just emit an event on the iframe window, and receive another event as response”. What could possibly go wrong?&lt;/p&gt;
+
+&lt;p&gt;So, your start implementing you solution with postMessages and it seems something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;window.addEventListener(&quot;message&quot;, (event) =&amp;gt; {
+    var apples = JSON.parse(event.data);
+    alert(apples);
+});
+ 
+frame.contentWindow.postMessage(JSON.stringify({
+    iCanHaz: &quot;apples&quot;
+}), &quot;*&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And it works fine.. until you have to do two simultaneous requests. The problem is that the event the window receives upon an incoming postMessage is always the same event – “message”, so you have to find a way to tell different responses.&lt;/p&gt;
+
+&lt;p&gt;The first, and most trivial solution, is to check the structure of the response, and according to the structure call different callbacks, or calling every callback with every response and filtering inside the callback.&lt;/p&gt;
+
+&lt;p&gt;So the implementation of the above suggestion would be something like this (disclaimer: this code is for demonstrational purposes only, in the real world I would write it completely differently)(note: notice that the postMessages are sent to different iFrames):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;callbacks = [];
+ 
+window.addEventListener(&quot;message&quot;, (event) =&amp;gt; {
+    callbacks.forEach(callback =&amp;gt; callback(event));
+});
+ 
+callbacks.push((event) =&amp;gt; {
+    const data = JSON.parse(event.data);
+    if(&quot;apples&quot; in data) {
+        alert(`Apples: ${data.apples}`);
+    }
+});
+ 
+callbacks.push((event) =&amp;gt; {
+    const data = JSON.parse(event.data);
+    if(&quot;oranges&quot; in data) {
+        alert(`Oranges: ${data.oranges}`);
+    }
+});
+ 
+frame.contentWindow.postMessage(JSON.stringify({
+    iCanHaz: &quot;apples&quot;
+}), &quot;*&quot;);
+ 
+anotherFrame.contentWindow.postMessage(JSON.stringify({
+    iCanHaz: &quot;oranges&quot;
+}), &quot;*&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This code would work, but it’s completely uInscalable. What if someone would add a postMessage that would expect a similar pattern as another call?&lt;/p&gt;
+
+&lt;p&gt;Luckily there is a solution 🙂&lt;/p&gt;
+
+&lt;p&gt;If, for every frame your code wants to communicate with, you open another  &lt;strong&gt;empty&lt;/strong&gt;  iframe without any src attribute (which would be in the same origin as you) you can programmatically open the real iframe inside that iframe, and then listen to the “message” event inside the intermediate iframe – you could be able to recognize which callback to call for every response.&lt;/p&gt;
+
+&lt;p&gt;It’s a bit hard to understand from reading, so let’s write some code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;class PostMessenger {
+    constructor(url) {
+        const parentIFrame = this._createIFrame();
+        parentIFrame.contentWindow.addEventListener(&quot;message&quot;, event =&amp;gt; this._handleIncomingMessage(event));
+        parentIFrame.contentDocument.body.innerHTML = `&amp;lt;iframe src=&quot;${url}&quot; id=&quot;inner_frame&quot;&amp;gt;&amp;lt;/iframe&amp;gt;`;
+        this._innerWindow = parentIFrame.contentDocument.getElementById(&quot;inner_frame&quot;).contentWindow;
+    }
+ 
+    sendMessage(message) {
+        return new Promise(resolve =&amp;gt; {
+            this._promiseResolver = resolve;
+            this._innerWindow.postMessage(message, &quot;*&quot;);
+        });
+    }
+ 
+    _handleIncomingMessage(event) {
+        this._promiseResolver(event);
+    }
+ 
+    _createIFrame() {
+        return $(&quot;&amp;lt;iframe&amp;gt;&amp;lt;/iframe&amp;gt;&quot;).appendTo(&quot;body&quot;)[0];
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And now, we can just use this class like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-javascript&quot;&gt;const iframeMessenger = new PostMessenger(&quot;http://localhost:8000/1&quot;);
+const message = JSON.stringify({type: &quot;fruits&quot;})
+iframeMessenger.sendMessage(message).then(event =&amp;gt; {
+    const data = JSON.parse(event.data);
+    console.log(`I got some fruits: ${data}`);
+});
+ 
+const anotherIframeMessenger = new PostMessenger(&quot;http://localhost:8000/2&quot;);
+const message = JSON.stringify({type: &quot;vegetables&quot;})
+anotherIframeMessenger.sendMessage(message).then(event =&amp;gt; {
+    const data = JSON.parse(event.data);
+    console.log(`I got some vegetables: ${data}`);
+});
+&lt;/code&gt;&lt;/pre&gt;</content><author><name>Ephi Gabay</name></author><summary type="html">Your boss comes to you, and tells you that he wants you to build something that communicates with a web page inside an iframe. “Sounds simple!” – you reply. You read the details, and you find out that the web page you need to communicate with is on another origin and uses postMessage for communication. “Ok.. PostMessage should be easy. You just emit an event on the iframe window, and receive another event as response”. What could possibly go wrong?</summary></entry><entry><title type="html">How I Found a Secret Menu</title><link href="http://localhost:4000/2017/01/04/how-i-found-a-secret-menu/" rel="alternate" type="text/html" title="How I Found a Secret Menu" /><published>2017-01-04T00:00:00+02:00</published><updated>2017-01-04T00:00:00+02:00</updated><id>http://localhost:4000/2017/01/04/how-i-found-a-secret-menu</id><content type="html" xml:base="http://localhost:4000/2017/01/04/how-i-found-a-secret-menu/">&lt;p&gt;There is this cool restaurant that my girlfriend and I like to visit called  &lt;a href=&quot;https://www.facebook.com/gordosrestaurant/&quot;&gt;Gordos&lt;/a&gt;. This place serves some awesome good looking burgers and milkshakes.&lt;br /&gt;
+Recently I heard some rumors about a secret menu they have. I googled a bit, and found out that there is actually a secret menu and it’s hidden in their mobile app. According to what people say on the internet, in order to find the secret menu you have to click an item in the regular menu, and the secret menu would just pop.&lt;br /&gt;
+I tried clicking items on the menu for a couple of minutes, but with no success. So I decided to go deeper.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/abdd928ceb8c9e10268b31c3c26be47c2fe1edb8037feae792a1fcc40a05e8ca.jpg?w=246&amp;amp;h=160&quot; alt=&quot;abdd928ceb8c9e10268b31c3c26be47c2fe1edb8037feae792a1fcc40a05e8ca&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I started by  &lt;a href=&quot;https://apkpure.com/&quot;&gt;downloading&lt;/a&gt;  and  &lt;a href=&quot;http://www.decompileandroid.com/&quot;&gt;decompiling&lt;/a&gt;  the apk file. I had no idea where to start looking in this big project, so I tried searching for some keywords like ‘סודי’ (secret) and ‘תפריט’ (menu), but I found nothing. That was weird. The word ‘תפריט’ for sure should exist in the app, it’s right there, on the main screen. There is only one solution for this problem I could think of – it downloads the content of the app from the interwebz.&lt;/p&gt;
+
+&lt;p&gt;First I wanted to check my theory. I put the phone on airplane mode and opened the app – nothing. The app doesn’t work without internet connection, five points to team ‘it loads the content from the interwebz’.&lt;/p&gt;
+
+&lt;p&gt;Now I just need to see what it loads from the internet – in order to intercept the traffic of the app I downloaded  &lt;a href=&quot;http://charlesproxy.com/&quot;&gt;Chales&lt;/a&gt;, set it as a proxy server on my phone and opened the app. I was expecting for some javascript code to be loaded, but no, it just loaded insane amount of json files (~20MB of json files). This time, when I searched for ‘סודי’, it found several results. Lots of these results seemed not relevant, but then I found this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/screen-shot-2017-01-04-at-10-58-15.png?w=312&amp;amp;h=344&quot; alt=&quot;screen-shot-2017-01-04-at-10-58-15&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The value in the ‘title’ field is ‘Gordos secret menu’ – jackpot! But, I expected that the ‘items’ field would contain the actual items in the secret menu, but no – it just contained null value. Luckily, the second object in the ‘catalog’ array was another object where the value of ‘title’ was just ‘secret menu’, and there the ‘items’ array actually contained the items of the secret menu:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/screen-shot-2017-01-04-at-11-01-35.png?w=291&amp;amp;h=374&quot; alt=&quot;Screen Shot 2017-01-04 at 11.01.35.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Another jackpot! But that wasn’t good enough, I wanted to see this menu inside the actual app – I needed to know which item in the menu I had to click in order for the secret menu to appear. I thought to myself, something in the app should know how to display the secret menu, so somewhere inside this json or the code of the app I decompiled there had to be a reference to this secret menu. I took the id of the secret menu and searched it in the json file, and I found it 🙂&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/screen-shot-2017-01-04-at-17-17-05.png?w=340&amp;amp;h=352&quot; alt=&quot;screen-shot-2017-01-04-at-17-17-05&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As you can see, it looks like there is an action related with this item which is some sort of baked potatoes and the id of the secret menu.. Looks like there should be a button on the element which says ‘חזור’ (go back) and it should perform a ‘openCatalogItems’ on this secret menu catalog. I opened the app, found this baked potato item, clicked on it, it showed me a picture of the meal, with two buttons on the bottom – ‘go back’ and ‘share on facebook’.. I clicked the ‘go back’ button.. and voila:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/whatsapp-image-2017-01-03-at-16-34-54.jpeg?w=200&amp;amp;h=356&quot; alt=&quot;whatsapp-image-2017-01-03-at-16-34-54&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;**“Shhhhhhhhhhhh!”&lt;br /&gt;
+**“Dont tell anyone! You found our secret menu 🙂 No doubt&lt;/em&gt;&lt;br /&gt;
+&lt;em&gt;you deserve a prize for finding the treasure”&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;And here’s the menu, in case you ever visit the restaurant:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/images/whatsapp-image-2017-01-04-at-17-34-14.jpeg?w=262&amp;amp;h=466&quot; alt=&quot;whatsapp-image-2017-01-04-at-17-34-14&quot; /&gt;&lt;/p&gt;</content><author><name>Ephi Gabay</name></author><summary type="html">There is this cool restaurant that my girlfriend and I like to visit called Gordos. This place serves some awesome good looking burgers and milkshakes. Recently I heard some rumors about a secret menu they have. I googled a bit, and found out that there is actually a secret menu and it’s hidden in their mobile app. According to what people say on the internet, in order to find the secret menu you have to click an item in the regular menu, and the secret menu would just pop. I tried clicking items on the menu for a couple of minutes, but with no success. So I decided to go deeper.</summary></entry><entry><title type="html">GIT Based Chat</title><link href="http://localhost:4000/2016/12/06/git-based-chat/" rel="alternate" type="text/html" title="GIT Based Chat" /><published>2016-12-06T00:00:00+02:00</published><updated>2016-12-06T00:00:00+02:00</updated><id>http://localhost:4000/2016/12/06/git-based-chat</id><content type="html" xml:base="http://localhost:4000/2016/12/06/git-based-chat/">&lt;p&gt;A while ago I noticed the similarity between how a git repository is structured to a chat. So I decided to write the completely not useful yet funny version of a chat client that uses git server as the backend server.&lt;/p&gt;
+
+&lt;p&gt;This chat client uses the branches in a git repository as the channels in the chat, and commit messages as actual messages.&lt;/p&gt;
+
+&lt;p&gt;You can clone the client from here: https://github.com/ephigabay/GIC&lt;/p&gt;
+
+&lt;p&gt;In order to run it you should run  &lt;code&gt;npm install&lt;/code&gt; in the directory you cloned the client to, edit the  &lt;code&gt;config.js&lt;/code&gt; file and enter a git repository you have access to and then run the client using  &lt;code&gt;npm start&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Be aware that this client will create branches and add commits to the repository you entered there, so be careful.&lt;/strong&gt;&lt;/p&gt;</content><author><name>Ephi Gabay</name></author><summary type="html">A while ago I noticed the similarity between how a git repository is structured to a chat. So I decided to write the completely not useful yet funny version of a chat client that uses git server as the backend server.</summary></entry><entry><title type="html">Simple CLI Virus Checker</title><link href="http://localhost:4000/2016/11/24/simple-cli-virus-checker/" rel="alternate" type="text/html" title="Simple CLI Virus Checker" /><published>2016-11-24T00:00:00+02:00</published><updated>2016-11-24T00:00:00+02:00</updated><id>http://localhost:4000/2016/11/24/simple-cli-virus-checker</id><content type="html" xml:base="http://localhost:4000/2016/11/24/simple-cli-virus-checker/">&lt;p&gt;Couple of days ago I downloaded an app for mac and I suspected it was a virus. Since I don’t have an antivirus, I decided that it would be too risky to run the app without making sure I won’t suffer from any ransomware this winter.&lt;/p&gt;
+
+&lt;p&gt;There’s a nice service called  &lt;a href=&quot;https://www.virustotal.com/&quot;&gt;VirusTotal&lt;/a&gt; which allows you to upload a file, it then scans it using the most common antiviruses and shows you which ones think the file is malicious and which don’t.&lt;/p&gt;
+
+&lt;p&gt;The only problem is that the file was pretty big (~300MB) and I didn’t want to waste time uploading it to VirusTotal on the super slow Israeli upload bandwidth. Lucky for me, VirusTotal allow doing the same operation by entering the  &lt;a href=&quot;https://en.wikipedia.org/wiki/Checksum&quot;&gt;checksum&lt;/a&gt; of the file.&lt;/p&gt;
+
+&lt;p&gt;Since I’m lazy as hell, getting the checksum of the file and searching for it on VirusTotal every time I wanted to check a file seemed too difficult; So I wrote a bash function that does it for me 🙂&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-bash&quot;&gt;# Ephi's virus checker
+ export PYTHONIOENCODING=utf8
+ export VT_API_KEY=&quot;&quot;
+ 
+function isvirus {
+     CHECKSUM=&quot;$(md5 -q $1)&quot;
+     curl -sS --request POST --url 'https://www.virustotal.com/vtapi/v2/file/report' -d   apikey=${VT_API_KEY} -d &quot;resource=${CHECKSUM}&quot; | \
+     python -c &quot;import sys, json; parsed = json.load(sys.stdin); print 'Don\\'t know..' if 'positives' not in parsed else 'nope..' if parsed['positives'] == 0 else 'yep..'&quot;
+ }
+ # End Ephi's virus checker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just copy and paste it into the end of your  &lt;code&gt;.bashrc&lt;/code&gt; file (it’s located in your home directory), replace the VirusTotal api key with your key (you can obtain one for free by signing up to VirusTotal) and then run  &lt;code&gt;source ~/.bashrc&lt;/code&gt; or reopen your terminal and you’re good to go!&lt;/p&gt;
+
+&lt;p&gt;To use this function just type  &lt;code&gt;isvirus FILENAME.EXTENTION&lt;/code&gt; in the terminal, and it would print either  &lt;code&gt;Don't know&lt;/code&gt; ,  &lt;code&gt;yep&lt;/code&gt; or &lt;code&gt;nope&lt;/code&gt; .. Simple as that!&lt;/p&gt;</content><author><name>Ephi Gabay</name></author><summary type="html">Couple of days ago I downloaded an app for mac and I suspected it was a virus. Since I don’t have an antivirus, I decided that it would be too risky to run the app without making sure I won’t suffer from any ransomware this winter.</summary></entry></feed>

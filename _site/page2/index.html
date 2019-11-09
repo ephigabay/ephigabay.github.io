@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      0xFE &middot; Ephi Gabay
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/public/images/11074706_10205914720324376_2701680389609521424_n.jpg" />
+      <h1>
+        <a href="/">
+          0xFE
+        </a>
+      </h1>
+      <p class="lead">I do stuff.. with computers</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      <a class="sidebar-nav-item" href="https://github.com/ephigabay/">GitHub</a>
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="posts">
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="/2016/11/24/simple-cli-virus-checker/">
+        Simple CLI Virus Checker
+      </a>
+    </h1>
+
+    <span class="post-date">24 Nov 2016</span>
+
+    <p>Couple of days ago I downloaded an app for mac and I suspected it was a virus. Since I don’t have an antivirus, I decided that it would be too risky to run the app without making sure I won’t suffer from any ransomware this winter.</p>
+
+<p>There’s a nice service called  <a href="https://www.virustotal.com/">VirusTotal</a> which allows you to upload a file, it then scans it using the most common antiviruses and shows you which ones think the file is malicious and which don’t.</p>
+
+<p>The only problem is that the file was pretty big (~300MB) and I didn’t want to waste time uploading it to VirusTotal on the super slow Israeli upload bandwidth. Lucky for me, VirusTotal allow doing the same operation by entering the  <a href="https://en.wikipedia.org/wiki/Checksum">checksum</a> of the file.</p>
+
+<p>Since I’m lazy as hell, getting the checksum of the file and searching for it on VirusTotal every time I wanted to check a file seemed too difficult; So I wrote a bash function that does it for me 🙂</p>
+
+<pre><code class="language-bash"># Ephi's virus checker
+ export PYTHONIOENCODING=utf8
+ export VT_API_KEY=""
+ 
+function isvirus {
+     CHECKSUM="$(md5 -q $1)"
+     curl -sS --request POST --url 'https://www.virustotal.com/vtapi/v2/file/report' -d   apikey=${VT_API_KEY} -d "resource=${CHECKSUM}" | \
+     python -c "import sys, json; parsed = json.load(sys.stdin); print 'Don\\'t know..' if 'positives' not in parsed else 'nope..' if parsed['positives'] == 0 else 'yep..'"
+ }
+ # End Ephi's virus checker
+</code></pre>
+
+<p>Just copy and paste it into the end of your  <code>.bashrc</code> file (it’s located in your home directory), replace the VirusTotal api key with your key (you can obtain one for free by signing up to VirusTotal) and then run  <code>source ~/.bashrc</code> or reopen your terminal and you’re good to go!</p>
+
+<p>To use this function just type  <code>isvirus FILENAME.EXTENTION</code> in the terminal, and it would print either  <code>Don't know</code> ,  <code>yep</code> or <code>nope</code> .. Simple as that!</p>
+
+  </div>
+  
+</div>
+
+<div class="pagination">
+  
+    <span class="pagination-item older">Older</span>
+  
+  
+    
+      <a class="pagination-item newer" href="/">Newer</a>
+    
+  
+</div>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,5 @@
+I"<<p>Your boss comes to you, and tells you that he wants you to build something that communicates with a web page inside an iframe.<br />
+“Sounds simple!” – you reply.<br />
+You read the details, and you find out that the web page you need to communicate with is on another origin and uses  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage">postMessage</a>  for communication.<br />
+“Ok.. PostMessage should be easy. You just emit an event on the iframe window, and receive another event as response”. What could possibly go wrong?</p>
+:ET

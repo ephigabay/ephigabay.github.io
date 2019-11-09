@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Promisifying Post Messages &middot; 0xFE
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/public/images/11074706_10205914720324376_2701680389609521424_n.jpg" />
+      <h1>
+        <a href="/">
+          0xFE
+        </a>
+      </h1>
+      <p class="lead">I do stuff.. with computers</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      <a class="sidebar-nav-item" href="https://github.com/ephigabay/">GitHub</a>
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Promisifying Post Messages</h1>
+  <span class="post-date">17 May 2017</span>
+  <p>Your boss comes to you, and tells you that he wants you to build something that communicates with a web page inside an iframe.<br />
+“Sounds simple!” – you reply.<br />
+You read the details, and you find out that the web page you need to communicate with is on another origin and uses  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage">postMessage</a>  for communication.<br />
+“Ok.. PostMessage should be easy. You just emit an event on the iframe window, and receive another event as response”. What could possibly go wrong?</p>
+
+<p>So, your start implementing you solution with postMessages and it seems something like this:</p>
+
+<pre><code class="language-javascript">window.addEventListener("message", (event) =&gt; {
+    var apples = JSON.parse(event.data);
+    alert(apples);
+});
+ 
+frame.contentWindow.postMessage(JSON.stringify({
+    iCanHaz: "apples"
+}), "*");
+</code></pre>
+
+<p>And it works fine.. until you have to do two simultaneous requests. The problem is that the event the window receives upon an incoming postMessage is always the same event – “message”, so you have to find a way to tell different responses.</p>
+
+<p>The first, and most trivial solution, is to check the structure of the response, and according to the structure call different callbacks, or calling every callback with every response and filtering inside the callback.</p>
+
+<p>So the implementation of the above suggestion would be something like this (disclaimer: this code is for demonstrational purposes only, in the real world I would write it completely differently)(note: notice that the postMessages are sent to different iFrames):</p>
+
+<pre><code class="language-javascript">callbacks = [];
+ 
+window.addEventListener("message", (event) =&gt; {
+    callbacks.forEach(callback =&gt; callback(event));
+});
+ 
+callbacks.push((event) =&gt; {
+    const data = JSON.parse(event.data);
+    if("apples" in data) {
+        alert(`Apples: ${data.apples}`);
+    }
+});
+ 
+callbacks.push((event) =&gt; {
+    const data = JSON.parse(event.data);
+    if("oranges" in data) {
+        alert(`Oranges: ${data.oranges}`);
+    }
+});
+ 
+frame.contentWindow.postMessage(JSON.stringify({
+    iCanHaz: "apples"
+}), "*");
+ 
+anotherFrame.contentWindow.postMessage(JSON.stringify({
+    iCanHaz: "oranges"
+}), "*");
+</code></pre>
+
+<p>This code would work, but it’s completely uInscalable. What if someone would add a postMessage that would expect a similar pattern as another call?</p>
+
+<p>Luckily there is a solution 🙂</p>
+
+<p>If, for every frame your code wants to communicate with, you open another  <strong>empty</strong>  iframe without any src attribute (which would be in the same origin as you) you can programmatically open the real iframe inside that iframe, and then listen to the “message” event inside the intermediate iframe – you could be able to recognize which callback to call for every response.</p>
+
+<p>It’s a bit hard to understand from reading, so let’s write some code:</p>
+
+<pre><code class="language-javascript">class PostMessenger {
+    constructor(url) {
+        const parentIFrame = this._createIFrame();
+        parentIFrame.contentWindow.addEventListener("message", event =&gt; this._handleIncomingMessage(event));
+        parentIFrame.contentDocument.body.innerHTML = `&lt;iframe src="${url}" id="inner_frame"&gt;&lt;/iframe&gt;`;
+        this._innerWindow = parentIFrame.contentDocument.getElementById("inner_frame").contentWindow;
+    }
+ 
+    sendMessage(message) {
+        return new Promise(resolve =&gt; {
+            this._promiseResolver = resolve;
+            this._innerWindow.postMessage(message, "*");
+        });
+    }
+ 
+    _handleIncomingMessage(event) {
+        this._promiseResolver(event);
+    }
+ 
+    _createIFrame() {
+        return $("&lt;iframe&gt;&lt;/iframe&gt;").appendTo("body")[0];
+    }
+}
+</code></pre>
+
+<p>And now, we can just use this class like this:</p>
+
+<pre><code class="language-javascript">const iframeMessenger = new PostMessenger("http://localhost:8000/1");
+const message = JSON.stringify({type: "fruits"})
+iframeMessenger.sendMessage(message).then(event =&gt; {
+    const data = JSON.parse(event.data);
+    console.log(`I got some fruits: ${data}`);
+});
+ 
+const anotherIframeMessenger = new PostMessenger("http://localhost:8000/2");
+const message = JSON.stringify({type: "vegetables"})
+anotherIframeMessenger.sendMessage(message).then(event =&gt; {
+    const data = JSON.parse(event.data);
+    console.log(`I got some vegetables: ${data}`);
+});
+</code></pre>
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2018/07/07/using-the-rules-of-tdd-to-know-which-tests-to-write/">
+            Using the Rules of TDD to Know Which Tests to Write
+            <small>07 Jul 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2018/06/18/thoughts-about-learning-how-to-code/">
+            Thoughts About Learning how to Code
+            <small>18 Jun 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2017/01/04/how-i-found-a-secret-menu/">
+            How I Found a Secret Menu
+            <small>04 Jan 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How I Found a Secret Menu &middot; 0xFE
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/public/images/11074706_10205914720324376_2701680389609521424_n.jpg" />
+      <h1>
+        <a href="/">
+          0xFE
+        </a>
+      </h1>
+      <p class="lead">I do stuff.. with computers</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      <a class="sidebar-nav-item" href="https://github.com/ephigabay/">GitHub</a>
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">How I Found a Secret Menu</h1>
+  <span class="post-date">04 Jan 2017</span>
+  <p>There is this cool restaurant that my girlfriend and I like to visit called  <a href="https://www.facebook.com/gordosrestaurant/">Gordos</a>. This place serves some awesome good looking burgers and milkshakes.<br />
+Recently I heard some rumors about a secret menu they have. I googled a bit, and found out that there is actually a secret menu and it’s hidden in their mobile app. According to what people say on the internet, in order to find the secret menu you have to click an item in the regular menu, and the secret menu would just pop.<br />
+I tried clicking items on the menu for a couple of minutes, but with no success. So I decided to go deeper.</p>
+
+<p><img src="/public/images/abdd928ceb8c9e10268b31c3c26be47c2fe1edb8037feae792a1fcc40a05e8ca.jpg?w=246&amp;h=160" alt="abdd928ceb8c9e10268b31c3c26be47c2fe1edb8037feae792a1fcc40a05e8ca" /></p>
+
+<p>I started by  <a href="https://apkpure.com/">downloading</a>  and  <a href="http://www.decompileandroid.com/">decompiling</a>  the apk file. I had no idea where to start looking in this big project, so I tried searching for some keywords like ‘סודי’ (secret) and ‘תפריט’ (menu), but I found nothing. That was weird. The word ‘תפריט’ for sure should exist in the app, it’s right there, on the main screen. There is only one solution for this problem I could think of – it downloads the content of the app from the interwebz.</p>
+
+<p>First I wanted to check my theory. I put the phone on airplane mode and opened the app – nothing. The app doesn’t work without internet connection, five points to team ‘it loads the content from the interwebz’.</p>
+
+<p>Now I just need to see what it loads from the internet – in order to intercept the traffic of the app I downloaded  <a href="http://charlesproxy.com/">Chales</a>, set it as a proxy server on my phone and opened the app. I was expecting for some javascript code to be loaded, but no, it just loaded insane amount of json files (~20MB of json files). This time, when I searched for ‘סודי’, it found several results. Lots of these results seemed not relevant, but then I found this:</p>
+
+<p><img src="/public/images/screen-shot-2017-01-04-at-10-58-15.png?w=312&amp;h=344" alt="screen-shot-2017-01-04-at-10-58-15" /></p>
+
+<p>The value in the ‘title’ field is ‘Gordos secret menu’ – jackpot! But, I expected that the ‘items’ field would contain the actual items in the secret menu, but no – it just contained null value. Luckily, the second object in the ‘catalog’ array was another object where the value of ‘title’ was just ‘secret menu’, and there the ‘items’ array actually contained the items of the secret menu:</p>
+
+<p><img src="/public/images/screen-shot-2017-01-04-at-11-01-35.png?w=291&amp;h=374" alt="Screen Shot 2017-01-04 at 11.01.35.png" /></p>
+
+<p>Another jackpot! But that wasn’t good enough, I wanted to see this menu inside the actual app – I needed to know which item in the menu I had to click in order for the secret menu to appear. I thought to myself, something in the app should know how to display the secret menu, so somewhere inside this json or the code of the app I decompiled there had to be a reference to this secret menu. I took the id of the secret menu and searched it in the json file, and I found it 🙂</p>
+
+<p><img src="/public/images/screen-shot-2017-01-04-at-17-17-05.png?w=340&amp;h=352" alt="screen-shot-2017-01-04-at-17-17-05" /></p>
+
+<p>As you can see, it looks like there is an action related with this item which is some sort of baked potatoes and the id of the secret menu.. Looks like there should be a button on the element which says ‘חזור’ (go back) and it should perform a ‘openCatalogItems’ on this secret menu catalog. I opened the app, found this baked potato item, clicked on it, it showed me a picture of the meal, with two buttons on the bottom – ‘go back’ and ‘share on facebook’.. I clicked the ‘go back’ button.. and voila:</p>
+
+<p><img src="/public/images/whatsapp-image-2017-01-03-at-16-34-54.jpeg?w=200&amp;h=356" alt="whatsapp-image-2017-01-03-at-16-34-54" /></p>
+
+<p><em>**“Shhhhhhhhhhhh!”<br />
+**“Dont tell anyone! You found our secret menu 🙂 No doubt</em><br />
+<em>you deserve a prize for finding the treasure”</em></p>
+
+<p>And here’s the menu, in case you ever visit the restaurant:</p>
+
+<p><img src="/public/images/whatsapp-image-2017-01-04-at-17-34-14.jpeg?w=262&amp;h=466" alt="whatsapp-image-2017-01-04-at-17-34-14" /></p>
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2018/07/07/using-the-rules-of-tdd-to-know-which-tests-to-write/">
+            Using the Rules of TDD to Know Which Tests to Write
+            <small>07 Jul 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2018/06/18/thoughts-about-learning-how-to-code/">
+            Thoughts About Learning how to Code
+            <small>18 Jun 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2017/05/17/promisifying-post-message/">
+            Promisifying Post Messages
+            <small>17 May 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+    </div>
+
+  </body>
+</html>

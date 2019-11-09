@@ -1,0 +1,27 @@
+# Dependencies
+markdown:         kramdown
+highlighter:      pygments
+
+# Permalinks
+permalink:        pretty
+#relative_permalinks: true
+
+# Setup
+title:            '0xFE'
+tagline:          'Ephi Gabay'
+description:      'I do stuff.. with computers'
+url:              https://0xfe.dev
+baseurl:          /
+
+author:
+  name:           'Ephi Gabay'
+#  url:            https://twitter.com/mdo
+
+plugins:          [jekyll-paginate]
+paginate:         5
+
+# Custom vars
+version:          2.1.0
+
+github:
+  repo:           https://github.com/ephigabay/

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Using the Rules of TDD to Know Which Tests to Write &middot; 0xFE
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+                                 <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <img src="/public/images/11074706_10205914720324376_2701680389609521424_n.jpg" />
+      <h1>
+        <a href="/">
+          0xFE
+        </a>
+      </h1>
+      <p class="lead">I do stuff.. with computers</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="sidebar-nav-item" href="/">Home</a>
+
+      
+
+      <a class="sidebar-nav-item" href="https://github.com/ephigabay/">GitHub</a>
+    </nav>
+
+    <p>&copy; 2019. All rights reserved.</p>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+  <h1 class="post-title">Using the Rules of TDD to Know Which Tests to Write</h1>
+  <span class="post-date">07 Jul 2018</span>
+  <p>As you might know, I’ve been spending the last few months or so teaching a friend of mine how to code. Lately, I started practicing TDD myself and decided to introduce this technique to him too.</p>
+
+<p>As a first project written with TDD we decided to go with a simple pong game. It’ll have two paddles and a ball, the ball should move in a random direction, and change its direction once it hits something. Simple enough.</p>
+
+<p>The first class he started writing was the Ball class. He wrote a test that checks whether the ball has an x and y position, then he wrote some code to pass that test. He moved on to testing that the ball can move and implemented a move() function that changes the position of the ball by a constant value and the test passed. After writing the move() function, he thought to himself (yes, I can read minds) – “wait, this shouldn’t be a constant value, it should be a randomly generated one”, so he decided to add a function that randomly generates these values. While he was writing the code that does it, I looked over his shoulder and saw that all of his tests are passing. According to the third law of TDD by Uncle Bob – “You are not allowed to write any more production code than is sufficient to pass the one failing unit test”, so he shouldn’t have written that function. I stopped him, and we started to think about what kind of test he should write that would test the change he wanted to make in the code. The first and most trivial solution was to write a test that creates two balls, moves them and makes sure that they move in different directions, but according to testing best practices, a test should be deterministic. It shouldn’t fail randomly even if the odds are very low for it to happen. So, this test wasn’t the test we were looking for. After some more thinking, I remembered another rule of testing, that a unit test should only test the class it was intended to test, and not any other code, but if we were going to test that the ball generates the direction randomly, we were also going to test the Math.random() function, and we shouldn’t.</p>
+
+<p>Now everything was clear, we had to mock Math.random(), luckily we found an npm module that does exactly that – jest-mock-random. All we had to do, was to mock the random() function and make it return predefined values, then make sure that the ball moves at the expected direction. 100% deterministic test.</p>
+
+<p>It was so fun and enlightening for me to be able to understand that something is wrong with a test without understanding exactly what is wrong with it or how to fix it just by knowing that it doesn’t comply with the rules and then using the rules and best practices to craft the perfect test that does exactly what it should.</p>
+
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2018/06/18/thoughts-about-learning-how-to-code/">
+            Thoughts About Learning how to Code
+            <small>18 Jun 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2017/05/17/promisifying-post-message/">
+            Promisifying Post Messages
+            <small>17 May 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2017/01/04/how-i-found-a-secret-menu/">
+            How I Found a Secret Menu
+            <small>04 Jan 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+    </div>
+
+  </body>
+</html>
